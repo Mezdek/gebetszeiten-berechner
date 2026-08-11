@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="de" dir="ltr">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Gebetszeiten-Berechner</title>
   </head>
   <body>
@@ -12,6 +12,10 @@
         <h1 data-i18n="appTitle"></h1>
         <div class="header-controls">
           <button type="button" id="about-btn" class="about-btn" data-i18n="aboutButton"></button>
+          <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span class="icon-sun" aria-hidden="true">☀</span>
+            <span class="icon-moon" aria-hidden="true">⏾</span>
+          </button>
           <select id="lang-select" class="lang-select" data-i18n-aria-label="langSwitcherLabel">
             <option value="de">Deutsch</option>
             <option value="ar">العربية</option>
@@ -29,15 +33,15 @@
             <label id="latitude-group-label" data-i18n="fieldLatitude"></label>
             <div class="dms-group" role="group" aria-labelledby="latitude-group-label">
               <span class="dms-part">
-                <input type="number" id="latitude-degrees" step="1" min="0" max="90" required />
+                <input type="number" id="latitude-degrees" step="1" min="0" max="90" required/>
                 <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
               </span>
               <span class="dms-part">
-                <input type="number" id="latitude-minutes" step="1" min="0" max="59" required />
+                <input type="number" id="latitude-minutes" step="1" min="0" max="59" required/>
                 <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
               </span>
               <span class="dms-part">
-                <input type="number" id="latitude-seconds" step="any" min="0" max="59.999" required />
+                <input type="number" id="latitude-seconds" step="any" min="0" max="59.999" required/>
                 <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
               </span>
               <select id="latitude-direction">
@@ -52,15 +56,15 @@
             <label id="longitude-group-label" data-i18n="fieldLongitude"></label>
             <div class="dms-group" role="group" aria-labelledby="longitude-group-label">
               <span class="dms-part">
-                <input type="number" id="longitude-degrees" step="1" min="0" max="180" required />
+                <input type="number" id="longitude-degrees" step="1" min="0" max="180" required/>
                 <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
               </span>
               <span class="dms-part">
-                <input type="number" id="longitude-minutes" step="1" min="0" max="59" required />
+                <input type="number" id="longitude-minutes" step="1" min="0" max="59" required/>
                 <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
               </span>
               <span class="dms-part">
-                <input type="number" id="longitude-seconds" step="any" min="0" max="59.999" required />
+                <input type="number" id="longitude-seconds" step="any" min="0" max="59.999" required/>
                 <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
               </span>
               <select id="longitude-direction">
@@ -73,14 +77,14 @@
 
           <div class="field">
             <label for="elevation" data-i18n="fieldElevation"></label>
-            <input type="number" id="elevation" name="elevation" step="any" />
+            <input type="number" id="elevation" name="elevation" step="any"/>
             <p class="field-hint" data-i18n="fieldElevationHint"></p>
             <p class="field-error" id="elevation-error" hidden></p>
           </div>
 
           <div class="field">
             <label for="timezone" data-i18n="fieldTimezone"></label>
-            <input type="text" id="timezone" name="timezone" required placeholder="Europe/Berlin" />
+            <input type="text" id="timezone" name="timezone" required placeholder="Europe/Berlin"/>
             <p class="field-hint" data-i18n="fieldTimezoneHint"></p>
             <p class="field-error" id="timezone-error" hidden></p>
           </div>
@@ -91,24 +95,24 @@
 
           <div class="field">
             <label for="fajr-angle" data-i18n="fieldFajrAngle"></label>
-            <input type="number" id="fajr-angle" name="fajrAngle" step="any" required />
+            <input type="number" id="fajr-angle" name="fajrAngle" step="any" required/>
             <p class="field-error" id="fajr-angle-error" hidden></p>
           </div>
 
           <div class="field">
             <label for="isha-angle" data-i18n="fieldIshaAngle"></label>
-            <input type="number" id="isha-angle" name="ishaAngle" step="any" required />
+            <input type="number" id="isha-angle" name="ishaAngle" step="any" required/>
             <p class="field-error" id="isha-angle-error" hidden></p>
           </div>
 
           <fieldset class="field">
             <legend data-i18n="fieldAsrMethod"></legend>
             <label class="radio-label">
-              <input type="radio" name="asrMethod" value="1" id="asr-method-1" checked />
+              <input type="radio" name="asrMethod" value="1" id="asr-method-1" checked/>
               <span data-i18n="asrMethodShafii"></span>
             </label>
             <label class="radio-label">
-              <input type="radio" name="asrMethod" value="2" id="asr-method-2" />
+              <input type="radio" name="asrMethod" value="2" id="asr-method-2"/>
               <span data-i18n="asrMethodHanafi"></span>
             </label>
           </fieldset>
@@ -123,7 +127,7 @@
 
           <div class="field">
             <label for="hijri-offset" data-i18n="fieldHijriOffset"></label>
-            <input type="number" id="hijri-offset" name="hijriOffsetDays" step="1" value="0" />
+            <input type="number" id="hijri-offset" name="hijriOffsetDays" step="1" value="0"/>
             <p class="field-hint" data-i18n="fieldHijriOffsetHint"></p>
             <p class="field-error" id="hijri-offset-error" hidden></p>
           </div>
@@ -134,19 +138,19 @@
 
           <div class="field">
             <label for="year" data-i18n="fieldYear"></label>
-            <input type="number" id="year" name="year" step="1" required />
+            <input type="number" id="year" name="year" step="1" required/>
             <p class="field-error" id="year-error" hidden></p>
           </div>
 
           <div class="field">
             <label for="generator" data-i18n="fieldGenerator"></label>
-            <input type="text" id="generator" name="generator" required />
+            <input type="text" id="generator" name="generator" required/>
             <p class="field-error" id="generator-error" hidden></p>
           </div>
 
           <div class="field">
             <label class="checkbox-label">
-              <input type="checkbox" id="validate-schema" name="validateSchema" />
+              <input type="checkbox" id="validate-schema" name="validateSchema"/>
               <span data-i18n="fieldValidateSchema"></span>
             </label>
             <p class="field-hint" data-i18n="fieldValidateSchemaHint"></p>
@@ -163,7 +167,7 @@
           <button type="submit" id="generate-btn" data-i18n="generateButton"></button>
           <button type="button" id="export-btn" data-i18n="exportConfig"></button>
           <button type="button" id="import-btn" data-i18n="importConfig"></button>
-          <input type="file" id="import-file" accept="application/json" hidden />
+          <input type="file" id="import-file" accept="application/json" hidden/>
         </div>
       </form>
 
@@ -190,11 +194,15 @@
         </div>
         <div class="about-meta-row">
           <dt data-i18n="aboutWebsiteLabel"></dt>
-          <dd><a href="https://mezdek.net" target="_blank" rel="noopener noreferrer">mezdek.net</a></dd>
+          <dd>
+            <a href="https://mezdek.net" target="_blank" rel="noopener noreferrer">mezdek.net</a>
+          </dd>
         </div>
         <div class="about-meta-row">
           <dt data-i18n="aboutEmailLabel"></dt>
-          <dd><a href="mailto:hello@mezdek.net">hello@mezdek.net</a></dd>
+          <dd>
+            <a href="mailto:hello@mezdek.net">hello@mezdek.net</a>
+          </dd>
         </div>
         <div class="about-meta-row">
           <dt data-i18n="aboutLicenseLabel"></dt>
