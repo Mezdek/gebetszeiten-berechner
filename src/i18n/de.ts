@@ -3,8 +3,20 @@ import type { Messages } from './messages.ts';
 export const de: Messages = {
   appTitle: 'Gebetszeiten-Berechner',
   langSwitcherLabel: 'Sprache',
-  langDe: 'Deutsch',
-  langAr: 'العربية',
+
+  aboutButton: 'Über',
+  aboutCloseLabel: 'Schließen',
+  aboutTitle: 'Über den Gebetszeiten-Berechner',
+  aboutDescription:
+    'Berechnet islamische Gebetszeiten für ein volles gregorianisches Jahr an einem festen Standort und exportiert sie als JSON-Datei.',
+  aboutHighLatitudeNote:
+    'Für hohe Breitengrade wird keine besondere Ausgleichsregel (z. B. Angle-Based- oder Nearest-Latitude-Methode) angewendet: Erreicht die Sonne den eingestellten Winkel an einem Datum nicht, wird kein Wert erfunden – die Berechnung meldet für dieses Datum stattdessen einen Fehler.',
+  aboutVersionLabel: 'Version',
+  aboutMaintainerLabel: 'Entwickler',
+  aboutWebsiteLabel: 'Webseite',
+  aboutEmailLabel: 'E-Mail',
+  aboutLicenseLabel: 'Lizenz',
+  aboutRepositoryLabel: 'Quellcode',
 
   sectionLocation: 'Standort',
   sectionCalculation: 'Berechnung',

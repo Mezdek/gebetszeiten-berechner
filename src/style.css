@@ -12,11 +12,19 @@
   --color-success-bg: #e8f3ee;
   --color-success-text: #1f6f5c;
   --radius: 8px;
+  /* Minimum comfortable tap target (Apple HIG / Android Material both land on ~44px). */
+  --tap-target: 2.75rem;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html,
+body {
+  max-inline-size: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -26,10 +34,14 @@ body {
   line-height: 1.5;
 }
 
+/* Mobile-first: the operator's primary device is a phone, so the base rules
+   below already are the phone layout. Wider viewports get more breathing
+   room and a few multi-column upgrades via the min-width media query. */
+
 #app {
   max-inline-size: 48rem;
   margin-inline: auto;
-  padding: 1.5rem 1rem 4rem;
+  padding: 1rem 0.75rem 3rem;
 }
 
 .app-header {
@@ -37,44 +49,46 @@ body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  margin-block-end: 1.5rem;
+  gap: 0.75rem;
+  margin-block-end: 1.25rem;
 }
 
 .app-header h1 {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   margin: 0;
 }
 
-.lang-switch {
+.header-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--color-muted);
 }
 
-.lang-btn {
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--color-border);
+.about-btn {
   background: var(--color-surface);
-  border-radius: var(--radius);
-  cursor: pointer;
+  border: 1px solid var(--color-border);
   color: var(--color-text);
+  border-radius: var(--radius);
+  padding-inline: 0.9rem;
+  min-block-size: var(--tap-target);
 }
 
-.lang-btn[aria-pressed='true'] {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-accent-contrast);
+.lang-select {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+  padding-inline: 0.6rem;
+  min-block-size: var(--tap-target);
 }
 
 .section {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 1rem 1.25rem 1.25rem;
-  margin-block-end: 1.25rem;
+  padding: 0.9rem 1rem 1.1rem;
+  margin-block-end: 1.1rem;
 }
 
 .section legend,
@@ -91,7 +105,7 @@ fieldset.field legend {
 .meta-fields-label {
   display: block;
   font-size: 0.9rem;
-  margin-block-end: 0.3rem;
+  margin-block-end: 0.35rem;
   font-weight: 500;
 }
 
@@ -99,7 +113,8 @@ fieldset.field legend {
 .field input[type='text'] {
   inline-size: 100%;
   max-inline-size: 22rem;
-  padding: 0.45rem 0.6rem;
+  min-block-size: var(--tap-target);
+  padding-inline: 0.7rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 1rem;
@@ -112,17 +127,29 @@ fieldset.field legend {
   border-color: var(--color-error);
 }
 
+/* --- degrees/minutes/seconds coordinate entry ------------------------- */
+
 .dms-group {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.6rem 0.5rem;
+}
+
+/* Each value+unit pair is one flex item, so wrapping never splits a number
+   from its unit onto separate lines — they move together as a group. */
+.dms-part {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 0 0 auto;
 }
 
 .dms-group input[type='number'] {
   inline-size: 4.5rem;
   max-inline-size: 4.5rem;
-  padding: 0.45rem 0.5rem;
+  min-block-size: var(--tap-target);
+  padding-inline: 0.5rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 1rem;
@@ -131,18 +158,20 @@ fieldset.field legend {
 }
 
 .dms-group select {
-  padding: 0.45rem 0.5rem;
+  min-block-size: var(--tap-target);
+  padding-inline: 0.5rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 1rem;
   background: var(--color-surface);
   color: var(--color-text);
+  flex: 0 0 auto;
 }
 
 .dms-unit {
   font-size: 0.8rem;
   color: var(--color-muted);
-  margin-inline-end: 0.35rem;
+  white-space: nowrap;
 }
 
 .field-hint {
@@ -163,31 +192,63 @@ fieldset.field legend {
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   font-weight: 400;
   margin-block-end: 0.3rem;
+  min-block-size: var(--tap-target);
 }
+
+.radio-label input,
+.checkbox-label input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  flex: 0 0 auto;
+}
+
+/* --- rounding table: div/role="table" so it can restack on narrow screens --- */
 
 .rounding-table {
-  inline-size: 100%;
-  border-collapse: collapse;
   margin-block-end: 1rem;
   font-size: 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
 }
 
-.rounding-table th,
-.rounding-table td {
-  text-align: start;
-  padding: 0.4rem 0.5rem;
+.rounding-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem 0.75rem;
   border-block-end: 1px solid var(--color-border);
-  vertical-align: top;
+}
+
+.rounding-row:last-child {
+  border-block-end: none;
+}
+
+.rounding-cell-name {
+  font-weight: 600;
+}
+
+.rounding-cell-offset {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rounding-offset-label {
+  font-size: 0.8rem;
+  color: var(--color-muted);
 }
 
 .rounding-table input[type='number'] {
   inline-size: 5.5rem;
-  padding: 0.3rem 0.4rem;
+  min-block-size: var(--tap-target);
+  padding-inline: 0.5rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  font-size: 1rem;
 }
 
 .rounding-direction {
@@ -197,19 +258,24 @@ fieldset.field legend {
 .rounding-explanation {
   color: var(--color-muted);
   display: block;
-  margin-block-start: 0.15rem;
+  margin-block-start: 0.1rem;
 }
+
+/* --- operator-defined meta fields --------------------------------------- */
 
 .meta-field-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  margin-block-end: 0.5rem;
+  margin-block-end: 0.6rem;
   align-items: center;
 }
 
 .meta-field-row input {
-  flex: 1 1 auto;
-  padding: 0.4rem 0.55rem;
+  flex: 1 1 8rem;
+  min-inline-size: 0;
+  min-block-size: var(--tap-target);
+  padding-inline: 0.6rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
 }
@@ -220,21 +286,23 @@ fieldset.field legend {
 
 .actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.6rem;
   margin-block-start: 1.5rem;
 }
 
 button {
   font: inherit;
   cursor: pointer;
+  min-block-size: var(--tap-target);
 }
 
 #generate-btn {
   background: var(--color-accent);
   color: var(--color-accent-contrast);
   border: none;
-  padding: 0.65rem 1.4rem;
+  padding-inline: 1.4rem;
   border-radius: var(--radius);
   font-weight: 600;
 }
@@ -246,7 +314,7 @@ button {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-text);
-  padding: 0.5rem 1rem;
+  padding-inline: 1rem;
   border-radius: var(--radius);
 }
 
@@ -270,6 +338,124 @@ button {
 .banner ul {
   margin: 0.4rem 0 0;
   padding-inline-start: 1.2rem;
+}
+
+/* --- About dialog --------------------------------------------------------- */
+
+#about-dialog {
+  border: none;
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem 1.4rem;
+  inline-size: min(92vw, 30rem);
+  max-block-size: 85vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+#about-dialog::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-end: 0.5rem;
+}
+
+.dialog-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.dialog-close {
+  flex: 0 0 auto;
+  inline-size: var(--tap-target);
+  block-size: var(--tap-target);
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  border-radius: var(--radius);
+}
+
+.dialog-close:hover {
+  background: var(--color-bg);
+}
+
+#about-dialog p {
+  font-size: 0.92rem;
+  color: var(--color-muted);
+}
+
+.about-meta {
+  margin: 0.75rem 0 0;
+}
+
+.about-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.4rem;
+  border-block-start: 1px solid var(--color-border);
+  font-size: 0.9rem;
+}
+
+.about-meta-row dt {
+  color: var(--color-muted);
+  flex: 0 0 auto;
+}
+
+.about-meta-row dd {
+  margin: 0;
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+
+.about-meta-row a {
+  color: var(--color-accent);
+}
+
+/* --- wider viewports: multi-column upgrades ---------------------------- */
+
+@media (min-width: 40em) {
+  #app {
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .section {
+    padding: 1rem 1.25rem 1.25rem;
+  }
+
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .actions button {
+    inline-size: auto;
+  }
+
+  .rounding-row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .rounding-cell-name {
+    flex: 0 0 6rem;
+  }
+
+  .rounding-cell-offset {
+    flex: 0 0 auto;
+  }
+
+  .rounding-cell-explanation {
+    flex: 1 1 auto;
+  }
 }
 
 html[dir='rtl'] body {

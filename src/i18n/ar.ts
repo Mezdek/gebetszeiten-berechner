@@ -3,8 +3,19 @@ import type { Messages } from './messages.ts';
 export const ar: Messages = {
   appTitle: 'حاسبة أوقات الصلاة',
   langSwitcherLabel: 'اللغة',
-  langDe: 'الألمانية',
-  langAr: 'العربية',
+
+  aboutButton: 'حول',
+  aboutCloseLabel: 'إغلاق',
+  aboutTitle: 'حول حاسبة أوقات الصلاة',
+  aboutDescription: 'تحسب أوقات الصلاة الإسلامية لسنة ميلادية كاملة في موقع ثابت وتصدّرها كملف JSON.',
+  aboutHighLatitudeNote:
+    'لا تُطبَّق أي قاعدة تعويضية لخطوط العرض العالية (مثل طريقة الزاوية أو أقرب خط عرض): إن لم تصل الشمس إلى الزاوية المحددة في تاريخ ما، لا تُختلق أي قيمة – يُبلَّغ عندئذٍ عن خطأ لهذا التاريخ بدلاً من ذلك.',
+  aboutVersionLabel: 'الإصدار',
+  aboutMaintainerLabel: 'المطوّر',
+  aboutWebsiteLabel: 'الموقع الإلكتروني',
+  aboutEmailLabel: 'البريد الإلكتروني',
+  aboutLicenseLabel: 'الترخيص',
+  aboutRepositoryLabel: 'المستودع البرمجي',
 
   sectionLocation: 'الموقع',
   sectionCalculation: 'الحساب',
