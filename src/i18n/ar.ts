@@ -1,0 +1,83 @@
+import type { Messages } from './messages.ts';
+
+export const ar: Messages = {
+  appTitle: 'حاسبة أوقات الصلاة',
+  langSwitcherLabel: 'اللغة',
+  langDe: 'الألمانية',
+  langAr: 'العربية',
+
+  sectionLocation: 'الموقع',
+  sectionCalculation: 'الحساب',
+  sectionAdjustments: 'التعديلات',
+  sectionOutput: 'الإخراج',
+  sectionRounding: 'التقريب',
+
+  fieldLatitude: 'خط العرض',
+  fieldLongitude: 'خط الطول',
+  fieldElevation: 'الارتفاع عن سطح البحر (م)',
+  fieldElevationHint: 'اتركه فارغًا لاستخدام 0 م.',
+  fieldTimezone: 'المنطقة الزمنية (IANA، مثال: Europe/Berlin)',
+  fieldTimezoneHint: 'لا تُستنتج من المتصفح – يجب إدخالها.',
+
+  fieldFajrAngle: 'زاوية الفجر (درجات تحت الأفق)',
+  fieldIshaAngle: 'زاوية العشاء (درجات تحت الأفق)',
+  fieldAsrMethod: 'طريقة العصر',
+  asrMethodShafii: 'شافعي/حنبلي (افتراضي، معامل 1)',
+  asrMethodHanafi: 'حنفي (معامل 2)',
+
+  fieldMinuteOffset: 'إزاحة بالدقائق',
+  fieldHijriOffset: 'إزاحة التاريخ الهجري (أيام)',
+  fieldHijriOffsetHint: 'تُطبَّق عالميًا على كل تاريخ، بين −2 و+2.',
+
+  fieldYear: 'السنة',
+  fieldGenerator: 'اسم الجهة المُصدرة',
+  fieldMetaFields: 'حقول إضافية',
+  metaKeyPlaceholder: 'اسم الحقل (مثال: العنوان)',
+  metaValuePlaceholder: 'القيمة',
+  addMetaField: 'إضافة حقل',
+  removeMetaField: 'إزالة',
+  fieldValidateSchema: 'التحقق من صحة الإخراج قبل الكتابة',
+  fieldValidateSchemaHint: 'معطّل افتراضيًا. عند فشل التحقق، لن يتم كتابة أي ملف.',
+
+  prayerFajr: 'الفجر',
+  prayerShuruq: 'الشروق',
+  prayerDhuhr: 'الظهر',
+  prayerAsr: 'العصر',
+  prayerMaghrib: 'المغرب',
+  prayerIsha: 'العشاء',
+
+  roundingDown: 'يُقرَّب لأسفل – الوقت المعلن أقرب بدقيقة واحدة كحد أقصى قبل الوقت المحسوب',
+  roundingUp: 'يُقرَّب لأعلى – الوقت المعلن أقرب بدقيقة واحدة كحد أقصى بعد الوقت المحسوب',
+
+  generateButton: 'إنشاء أوقات الصلاة',
+  generating: 'جارٍ الإنشاء …',
+  generateSuccess: 'تم إنشاء الملف «{filename}».',
+  generateCancelled: 'تم إلغاء الحفظ.',
+  generateValidationFailedTitle: 'فشل التحقق',
+  generateValidationFailedIntro: 'هذا خطأ في هذا التطبيق وليس خطأ من المُشغّل. لم يتم كتابة أي ملف. القواعد المتأثرة:',
+
+  configNotFound: 'لم يتم العثور على إعدادات محفوظة. يرجى تعبئة النموذج.',
+  configLoaded: 'تم تحميل الإعدادات المحفوظة.',
+  configRecovered: 'كانت الإعدادات المحفوظة تالفة وتم حفظها تحت «{backupKey}». يرجى تعبئة النموذج من جديد.',
+
+  exportConfig: 'تصدير الإعدادات',
+  importConfig: 'استيراد الإعدادات',
+  importSuccess: 'تم استيراد الإعدادات.',
+  importFailedParse: 'الملف لا يحتوي على JSON صالح.',
+  importFailedShape: 'الملف لا يحتوي على إعدادات صالحة.',
+
+  errorLatitude: 'يجب أن يكون خط العرض بين −90 و90.',
+  errorLongitude: 'يجب أن يكون خط الطول بين −180 و180.',
+  errorElevation: 'يجب أن يكون الارتفاع بين 0 و9000 م.',
+  errorTimezoneRequired: 'المنطقة الزمنية مطلوبة.',
+  errorTimezoneUnknown: 'منطقة زمنية غير معروفة.',
+  errorDepressionAngle: 'يجب أن تكون الزاوية بين 2° و30°.',
+  errorHijriOffset: 'يجب أن تكون إزاحة التاريخ الهجري عددًا صحيحًا بين −2 و2.',
+  errorMinuteOffset: 'يجب أن تكون إزاحة الدقائق عددًا صحيحًا بين −60 و60.',
+  errorYear: 'يرجى إدخال سنة صالحة.',
+  errorGeneratorRequired: 'اسم الجهة المُصدرة مطلوب.',
+  errorMetaKeyRequired: 'لا يمكن أن يكون اسم الحقل فارغًا.',
+  errorFixBeforeGenerate: 'يرجى تصحيح الحقول المُشار إليها قبل إنشاء الملف.',
+
+  saved: 'تم الحفظ.',
+};

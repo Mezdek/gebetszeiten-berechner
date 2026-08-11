@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="de" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gebetszeiten-Berechner</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <h1 data-i18n="appTitle"></h1>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <span data-i18n="langSwitcherLabel" class="lang-switch-label"></span>
+          <button type="button" id="lang-de-btn" class="lang-btn" data-lang="de">
+            <span data-i18n="langDe"></span>
+          </button>
+          <button type="button" id="lang-ar-btn" class="lang-btn" data-lang="ar">
+            <span data-i18n="langAr"></span>
+          </button>
+        </div>
+      </header>
+
+      <div id="status-banner" class="banner" hidden role="status"></div>
+
+      <form id="config-form" novalidate>
+        <fieldset class="section">
+          <legend data-i18n="sectionLocation"></legend>
+
+          <div class="field">
+            <label for="latitude" data-i18n="fieldLatitude"></label>
+            <input type="number" id="latitude" name="latitude" step="any" required />
+            <p class="field-error" id="latitude-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="longitude" data-i18n="fieldLongitude"></label>
+            <input type="number" id="longitude" name="longitude" step="any" required />
+            <p class="field-error" id="longitude-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="elevation" data-i18n="fieldElevation"></label>
+            <input type="number" id="elevation" name="elevation" step="any" />
+            <p class="field-hint" data-i18n="fieldElevationHint"></p>
+            <p class="field-error" id="elevation-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="timezone" data-i18n="fieldTimezone"></label>
+            <input type="text" id="timezone" name="timezone" required placeholder="Europe/Berlin" />
+            <p class="field-hint" data-i18n="fieldTimezoneHint"></p>
+            <p class="field-error" id="timezone-error" hidden></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="section">
+          <legend data-i18n="sectionCalculation"></legend>
+
+          <div class="field">
+            <label for="fajr-angle" data-i18n="fieldFajrAngle"></label>
+            <input type="number" id="fajr-angle" name="fajrAngle" step="any" required />
+            <p class="field-error" id="fajr-angle-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="isha-angle" data-i18n="fieldIshaAngle"></label>
+            <input type="number" id="isha-angle" name="ishaAngle" step="any" required />
+            <p class="field-error" id="isha-angle-error" hidden></p>
+          </div>
+
+          <fieldset class="field">
+            <legend data-i18n="fieldAsrMethod"></legend>
+            <label class="radio-label">
+              <input type="radio" name="asrMethod" value="1" id="asr-method-1" checked />
+              <span data-i18n="asrMethodShafii"></span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="asrMethod" value="2" id="asr-method-2" />
+              <span data-i18n="asrMethodHanafi"></span>
+            </label>
+          </fieldset>
+        </fieldset>
+
+        <fieldset class="section">
+          <legend data-i18n="sectionAdjustments"></legend>
+
+          <table class="rounding-table" id="rounding-table">
+            <tbody id="rounding-table-body"></tbody>
+          </table>
+
+          <div class="field">
+            <label for="hijri-offset" data-i18n="fieldHijriOffset"></label>
+            <input type="number" id="hijri-offset" name="hijriOffsetDays" step="1" value="0" />
+            <p class="field-hint" data-i18n="fieldHijriOffsetHint"></p>
+            <p class="field-error" id="hijri-offset-error" hidden></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="section">
+          <legend data-i18n="sectionOutput"></legend>
+
+          <div class="field">
+            <label for="year" data-i18n="fieldYear"></label>
+            <input type="number" id="year" name="year" step="1" required />
+            <p class="field-error" id="year-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="generator" data-i18n="fieldGenerator"></label>
+            <input type="text" id="generator" name="generator" required />
+            <p class="field-error" id="generator-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label class="checkbox-label">
+              <input type="checkbox" id="validate-schema" name="validateSchema" />
+              <span data-i18n="fieldValidateSchema"></span>
+            </label>
+            <p class="field-hint" data-i18n="fieldValidateSchemaHint"></p>
+          </div>
+
+          <div class="field">
+            <p class="meta-fields-label" data-i18n="fieldMetaFields"></p>
+            <div id="meta-fields-list"></div>
+            <button type="button" id="add-meta-field-btn" data-i18n="addMetaField"></button>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button type="submit" id="generate-btn" data-i18n="generateButton"></button>
+          <button type="button" id="export-btn" data-i18n="exportConfig"></button>
+          <button type="button" id="import-btn" data-i18n="importConfig"></button>
+          <input type="file" id="import-file" accept="application/json" hidden />
+        </div>
+      </form>
+
+      <div id="result-banner" class="banner" hidden role="status"></div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
