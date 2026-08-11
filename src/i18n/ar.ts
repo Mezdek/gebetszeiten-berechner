@@ -14,6 +14,13 @@ export const ar: Messages = {
 
   fieldLatitude: 'خط العرض',
   fieldLongitude: 'خط الطول',
+  dmsDegreesUnit: 'درجة',
+  dmsMinutesUnit: 'دقيقة',
+  dmsSecondsUnit: 'ثانية',
+  directionNorth: 'شمال (N)',
+  directionSouth: 'جنوب (S)',
+  directionEast: 'شرق (E)',
+  directionWest: 'غرب (W)',
   fieldElevation: 'الارتفاع عن سطح البحر (م)',
   fieldElevationHint: 'اتركه فارغًا لاستخدام 0 م.',
   fieldTimezone: 'المنطقة الزمنية (IANA، مثال: Europe/Berlin)',
@@ -68,6 +75,8 @@ export const ar: Messages = {
 
   errorLatitude: 'يجب أن يكون خط العرض بين −90 و90.',
   errorLongitude: 'يجب أن يكون خط الطول بين −180 و180.',
+  errorDmsDegrees: 'يجب أن تكون الدرجات عددًا صحيحًا ضمن النطاق المسموح.',
+  errorDmsMinutesSeconds: 'يجب أن تكون الدقائق والثواني بين 0 وأقل من 60.',
   errorElevation: 'يجب أن يكون الارتفاع بين 0 و9000 م.',
   errorTimezoneRequired: 'المنطقة الزمنية مطلوبة.',
   errorTimezoneUnknown: 'منطقة زمنية غير معروفة.',

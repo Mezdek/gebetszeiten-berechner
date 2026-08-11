@@ -12,6 +12,13 @@ export interface Messages {
 
   fieldLatitude: string;
   fieldLongitude: string;
+  dmsDegreesUnit: string;
+  dmsMinutesUnit: string;
+  dmsSecondsUnit: string;
+  directionNorth: string;
+  directionSouth: string;
+  directionEast: string;
+  directionWest: string;
   fieldElevation: string;
   fieldElevationHint: string;
   fieldTimezone: string;
@@ -66,6 +73,8 @@ export interface Messages {
 
   errorLatitude: string;
   errorLongitude: string;
+  errorDmsDegrees: string;
+  errorDmsMinutesSeconds: string;
   errorElevation: string;
   errorTimezoneRequired: string;
   errorTimezoneUnknown: string;
