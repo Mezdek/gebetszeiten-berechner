@@ -1,3 +1,7 @@
+/* =========================================================================
+   Tokens
+   ========================================================================= */
+
 :root {
   color-scheme: light;
   --color-bg: #f5f5f2;
@@ -11,6 +15,7 @@
   --color-error-bg: #fbeceb;
   --color-success-bg: #e8f3ee;
   --color-success-text: #1f6f5c;
+  --color-backdrop: rgb(0 0 0 / 0.5);
   --radius: 8px;
   /* Minimum comfortable tap target (Apple HIG / Android Material both land on ~44px). */
   --tap-target: 2.75rem;
@@ -20,6 +25,84 @@
     "Segoe UI",
     sans-serif;
 }
+
+/* =========================================================================
+   Theming (light default, dark via system preference or manual override)
+   ========================================================================= */
+
+/* Manual dark theme, set by the theme-toggle button and persisted in localStorage. */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #1a1a18;
+  --color-surface: #2a2a28;
+  --color-border: #3d3d3a;
+  --color-text: #e8e6e0;
+  --color-muted: #9a9890;
+  --color-accent: #3b9b84;
+  --color-accent-contrast: #ffffff;
+  --color-error: #f28b82;
+  --color-error-bg: #3d1a18;
+  --color-success-bg: #1a2d28;
+  --color-success-text: #3b9b84;
+}
+
+/* System prefers dark and the operator hasn't picked a theme explicitly. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --color-bg: #1a1a18;
+    --color-surface: #2a2a28;
+    --color-border: #3d3d3a;
+    --color-text: #e8e6e0;
+    --color-muted: #9a9890;
+    --color-accent: #3b9b84;
+    --color-accent-contrast: #ffffff;
+    --color-error: #f28b82;
+    --color-error-bg: #3d1a18;
+    --color-success-bg: #1a2d28;
+    --color-success-text: #3b9b84;
+  }
+}
+
+/* Sun/moon icon swap on the theme-toggle button. Explicit data-theme always
+   wins over system preference; with neither set, system preference decides. */
+.theme-toggle .icon-sun {
+  display: block;
+}
+
+.theme-toggle .icon-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .theme-toggle .icon-sun {
+    display: none;
+  }
+
+  :root:not([data-theme]) .theme-toggle .icon-moon {
+    display: block;
+  }
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+[data-theme="light"] .theme-toggle .icon-sun {
+  display: none;
+}
+
+[data-theme="light"] .theme-toggle .icon-moon {
+  display: block;
+}
+
+/* =========================================================================
+   Reset / base
+   ========================================================================= */
 
 * {
   box-sizing: border-box;
@@ -37,6 +120,14 @@ body {
   color: var(--color-text);
   line-height: 1.5;
 }
+
+html[dir="rtl"] body {
+  font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
+}
+
+/* =========================================================================
+   Layout
+   ========================================================================= */
 
 /* Mobile-first: the operator's primary device is a phone, so the base rules
    below already are the phone layout. Wider viewports get more breathing
@@ -68,71 +159,6 @@ body {
   gap: 0.5rem;
 }
 
-.about-btn {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  border-radius: var(--radius);
-  padding-inline: 0.9rem;
-  min-block-size: var(--tap-target);
-}
-
-/* --- Improved Dropdown Styles --- */
-
-.lang-select,
-.dms-group select {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 1rem;
-  padding-inline: 0.6rem;
-  min-block-size: var(--tap-target);
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6860' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  padding-inline-end: 2.2rem;
-  cursor: pointer;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-/* RTL support for dropdowns */
-html[dir="rtl"] .lang-select,
-html[dir="rtl"] .dms-group select {
-  background-position: left 0.75rem center;
-  padding-inline-end: 0.6rem;
-  padding-inline-start: 2.2rem;
-}
-
-.lang-select:hover,
-.dms-group select:hover {
-  border-color: var(--color-accent);
-}
-
-.lang-select:focus,
-.dms-group select:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
-}
-
-/* Specific overrides for the language selector */
-.lang-select {
-  min-inline-size: 8rem;
-  background-color: var(--color-surface);
-}
-
-/* Style dropdown options */
-.lang-select option,
-.dms-group select option {
-  padding: 0.5rem;
-  background: var(--color-surface);
-  color: var(--color-text);
-}
-
 .section {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -146,6 +172,18 @@ fieldset.field legend {
   font-weight: 600;
   padding-inline: 0.25rem;
 }
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.6rem;
+  margin-block-start: 1.5rem;
+}
+
+/* =========================================================================
+   Form components
+   ========================================================================= */
 
 .field {
   margin-block: 0.9rem;
@@ -177,7 +215,38 @@ fieldset.field legend {
   border-color: var(--color-error);
 }
 
-/* --- degrees/minutes/seconds coordinate entry ------------------------- */
+.field-hint {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin-block-start: 0.25rem;
+  margin-block-end: 0;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: var(--color-error);
+  margin-block-start: 0.25rem;
+  margin-block-end: 0;
+}
+
+.radio-label,
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+  margin-block-end: 0.3rem;
+  min-block-size: var(--tap-target);
+}
+
+.radio-label input,
+.checkbox-label input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  flex: 0 0 auto;
+}
+
+/* --- degrees/minutes/seconds coordinate entry --------------------------- */
 
 .dms-group {
   display: flex;
@@ -213,35 +282,66 @@ fieldset.field legend {
   white-space: nowrap;
 }
 
-.field-hint {
-  font-size: 0.8rem;
-  color: var(--color-muted);
-  margin-block-start: 0.25rem;
-  margin-block-end: 0;
-}
+/* --- dropdowns (language select + DMS direction selects) ---------------- */
 
-.field-error {
-  font-size: 0.8rem;
-  color: var(--color-error);
-  margin-block-start: 0.25rem;
-  margin-block-end: 0;
-}
-
-.radio-label,
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 400;
-  margin-block-end: 0.3rem;
+.lang-select,
+.dms-group select {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 1rem;
+  padding-inline: 0.6rem;
   min-block-size: var(--tap-target);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6860' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  /* No logical property exists for background-position; the RTL rule below
+     mirrors this by hand. */
+  background-position: right 0.75rem center;
+  padding-inline-end: 2.2rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.radio-label input,
-.checkbox-label input {
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  flex: 0 0 auto;
+html[dir="rtl"] .lang-select,
+html[dir="rtl"] .dms-group select {
+  background-position: left 0.75rem center;
+  padding-inline-end: 0.6rem;
+  padding-inline-start: 2.2rem;
+}
+
+.lang-select:hover,
+.dms-group select:hover {
+  border-color: var(--color-accent);
+}
+
+.lang-select:focus,
+.dms-group select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+.lang-select {
+  min-inline-size: 8rem;
+  background-color: var(--color-surface);
+}
+
+.lang-select option,
+.dms-group select option {
+  padding: 0.5rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  .lang-select,
+  .dms-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
 }
 
 /* --- rounding table: div/role="table" so it can restack on narrow screens --- */
@@ -300,7 +400,7 @@ fieldset.field legend {
   margin-block-start: 0.1rem;
 }
 
-/* --- operator-defined meta fields --------------------------------------- */
+/* --- operator-defined meta fields ---------------------------------------- */
 
 .meta-field-row {
   display: flex;
@@ -323,13 +423,7 @@ fieldset.field legend {
   flex: 0 0 auto;
 }
 
-.actions {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.6rem;
-  margin-block-start: 1.5rem;
-}
+/* --- buttons -------------------------------------------------------------- */
 
 button {
   font: inherit;
@@ -346,6 +440,14 @@ button {
   font-weight: 600;
 }
 
+.about-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius);
+  padding-inline: 0.9rem;
+}
+
 #export-btn,
 #import-btn,
 #add-meta-field-btn,
@@ -357,11 +459,45 @@ button {
   border-radius: var(--radius);
 }
 
+.theme-toggle {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius);
+  padding-inline: 0.6rem;
+  min-block-size: var(--tap-target);
+  min-inline-size: var(--tap-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--color-bg);
+  border-color: var(--color-accent);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+/* =========================================================================
+   Banners
+   ========================================================================= */
+
 .banner {
   padding: 0.75rem 1rem;
   border-radius: var(--radius);
   margin-block-end: 1.25rem;
   font-size: 0.9rem;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .banner.info {
@@ -379,7 +515,9 @@ button {
   padding-inline-start: 1.2rem;
 }
 
-/* --- About dialog --------------------------------------------------------- */
+/* =========================================================================
+   About dialog
+   ========================================================================= */
 
 #about-dialog {
   border: none;
@@ -393,7 +531,12 @@ button {
 }
 
 #about-dialog::backdrop {
-  background: rgb(0 0 0 / 0.5);
+  background: var(--color-backdrop);
+}
+
+#about-dialog p {
+  font-size: 0.92rem;
+  color: var(--color-muted);
 }
 
 .dialog-header {
@@ -425,11 +568,6 @@ button {
   background: var(--color-bg);
 }
 
-#about-dialog p {
-  font-size: 0.92rem;
-  color: var(--color-muted);
-}
-
 .about-meta {
   margin: 0.75rem 0 0;
 }
@@ -458,149 +596,92 @@ button {
   color: var(--color-accent);
 }
 
-/* --- Dark/Light Mode Toggle --- */
+/* =========================================================================
+   Accessibility & interaction states
+   ========================================================================= */
 
-.theme-toggle {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  border-radius: var(--radius);
-  padding-inline: 0.6rem;
-  min-block-size: var(--tap-target);
-  min-inline-size: var(--tap-target);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* The dialog itself is not a meaningful focus target — showModal() moves
+   focus to its first focusable child. */
+#about-dialog:focus-visible {
+  outline: none;
+}
+
+button,
+.about-btn,
+.lang-select,
+.dialog-close {
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
+    opacity 0.2s ease,
     transform 0.1s ease;
 }
 
-.theme-toggle:hover {
+button:hover:not(:disabled),
+.about-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+button:active:not(:disabled),
+.about-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+#generate-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-accent) 85%, black);
+}
+
+#export-btn:hover:not(:disabled),
+#import-btn:hover:not(:disabled),
+#add-meta-field-btn:hover:not(:disabled),
+.meta-field-row button:hover:not(:disabled) {
   background: var(--color-bg);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Text/number inputs; selects are already covered by their own dedicated
+   hover/focus rules above. */
+input:not([type="radio"]):not([type="checkbox"]):hover {
   border-color: var(--color-accent);
 }
 
-.theme-toggle:active {
-  transform: scale(0.95);
+input:not([type="radio"]):not([type="checkbox"]):focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
 }
 
-.theme-toggle .icon-sun {
-  display: block;
+.field:has(input:invalid) label {
+  color: var(--color-error);
 }
 
-.theme-toggle .icon-moon {
+.field:has(input:invalid) .field-hint {
+  color: var(--color-error);
+}
+
+/* Dims the dialog if focus is ever moved outside it programmatically — under
+   normal use showModal()'s native focus trap keeps this from being visible. */
+#about-dialog:not(:focus-within) {
+  opacity: 0.5;
+}
+
+[hidden] {
   display: none;
 }
 
-/* When dark mode is active */
-[data-theme="light"] .theme-toggle .icon-sun {
-  display: none;
-}
-
-[data-theme="light"] .theme-toggle .icon-moon {
-  display: block;
-}
-
-/* System preference dark mode */
-@media (prefers-color-scheme: dark) {
-  .theme-toggle .icon-sun {
-    display: none;
-  }
-
-  .theme-toggle .icon-moon {
-    display: block;
-  }
-
-  [data-theme="dark"] .theme-toggle .icon-sun {
-    display: block;
-  }
-
-  [data-theme="dark"] .theme-toggle .icon-moon {
-    display: none;
-  }
-}
-
-/* --- Manual Theme Override --- */
-
-/* Light theme (manual) */
-[data-theme="light"] {
-  color-scheme: light;
-  --color-bg: #f5f5f2;
-  --color-surface: #ffffff;
-  --color-border: #d8d5cd;
-  --color-text: #232220;
-  --color-muted: #6b6860;
-  --color-accent: #1f6f5c;
-  --color-accent-contrast: #ffffff;
-  --color-error: #b3261e;
-  --color-error-bg: #fbeceb;
-  --color-success-bg: #e8f3ee;
-  --color-success-text: #1f6f5c;
-}
-
-/* Dark theme (manual) */
-[data-theme="dark"] {
-  color-scheme: dark;
-  --color-bg: #1a1a18;
-  --color-surface: #2a2a28;
-  --color-border: #3d3d3a;
-  --color-text: #e8e6e0;
-  --color-muted: #9a9890;
-  --color-accent: #3b9b84;
-  --color-accent-contrast: #ffffff;
-  --color-error: #f28b82;
-  --color-error-bg: #3d1a18;
-  --color-success-bg: #1a2d28;
-  --color-success-text: #3b9b84;
-}
-
-/* When manual theme is set, override system preference */
-[data-theme="dark"] .theme-toggle .icon-sun {
-  display: block;
-}
-
-[data-theme="dark"] .theme-toggle .icon-moon {
-  display: none;
-}
-
-[data-theme="light"] .theme-toggle .icon-sun {
-  display: none;
-}
-
-[data-theme="light"] .theme-toggle .icon-moon {
-  display: block;
-}
-
-/* Keep system preference as fallback when no data-theme is set */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    color-scheme: dark;
-    --color-bg: #1a1a18;
-    --color-surface: #2a2a28;
-    --color-border: #3d3d3a;
-    --color-text: #e8e6e0;
-    --color-muted: #9a9890;
-    --color-accent: #3b9b84;
-    --color-accent-contrast: #ffffff;
-    --color-error: #f28b82;
-    --color-error-bg: #3d1a18;
-    --color-success-bg: #1a2d28;
-    --color-success-text: #3b9b84;
-  }
-}
-
-/* For dark mode support in dropdowns */
-@media (prefers-color-scheme: dark) {
-  .lang-select,
-  .dms-group select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  }
-}
-
-/* --- wider viewports: multi-column upgrades ---------------------------- */
+/* =========================================================================
+   Responsive: wider viewports get multi-column upgrades
+   ========================================================================= */
 
 @media (min-width: 40em) {
   #app {
@@ -639,103 +720,9 @@ button {
   }
 }
 
-html[dir="rtl"] body {
-  font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
-}
-
-/* --- Accessibility & Interaction Improvements ------------------------- */
-
-/* Focus indicators for keyboard navigation */
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Remove default focus outline where we provide our own */
-#about-dialog:focus-visible {
-  outline: none;
-}
-
-/* Interactive feedback for buttons and controls */
-button,
-.about-btn,
-.lang-select,
-.dialog-close {
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    opacity 0.2s ease,
-    transform 0.1s ease;
-}
-
-button:hover:not(:disabled),
-.about-btn:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-button:active:not(:disabled),
-.about-btn:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-#generate-btn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--color-accent) 85%, black);
-}
-
-#export-btn:hover:not(:disabled),
-#import-btn:hover:not(:disabled),
-#add-meta-field-btn:hover:not(:disabled),
-.meta-field-row button:hover:not(:disabled) {
-  background: var(--color-bg);
-}
-
-/* Disabled states */
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Input and select interactions */
-input:not([type="radio"]):not([type="checkbox"]):hover,
-select:hover {
-  border-color: var(--color-accent);
-}
-
-input:not([type="radio"]):not([type="checkbox"]):focus,
-select:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
-}
-
-/* Field validation styling with :has() support */
-.field:has(input:invalid) label {
-  color: var(--color-error);
-}
-
-.field:has(input:invalid) .field-hint {
-  color: var(--color-error);
-}
-
-/* Dialog accessibility enhancements */
-#about-dialog:not(:focus-within) {
-  opacity: 0.5;
-}
-
-/* Smooth banner transitions */
-.banner {
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-}
-
-/* Ensure hidden elements are truly hidden */
-[hidden] {
-  display: none !important;
-}
-
-/* --- Print Styles ----------------------------------------------------- */
+/* =========================================================================
+   Print
+   ========================================================================= */
 
 @media print {
   #app {
@@ -743,10 +730,7 @@ select:focus {
     padding: 0.5rem;
   }
 
-  .actions {
-    display: none !important;
-  }
-
+  .actions,
   .header-controls {
     display: none !important;
   }
@@ -766,6 +750,8 @@ select:focus {
   }
 
   body {
+    /* Deliberately not a theme token: printed output should stay light and
+       ink-sparing even when the on-screen theme is dark. */
     background: white;
   }
 
@@ -774,7 +760,9 @@ select:focus {
   }
 }
 
-/* --- Reduced Motion Preferences --------------------------------------- */
+/* =========================================================================
+   Reduced motion
+   ========================================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -788,9 +776,10 @@ select:focus {
 
   button,
   .about-btn,
+  .theme-toggle,
   .lang-select,
   .dialog-close {
-    transition: none !important;
+    transition: none;
   }
 
   #about-dialog:not(:focus-within) {
@@ -798,7 +787,9 @@ select:focus {
   }
 }
 
-/* --- High Contrast Mode Support --------------------------------------- */
+/* =========================================================================
+   High contrast
+   ========================================================================= */
 
 @media (prefers-contrast: high) {
   :root {
