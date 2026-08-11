@@ -8,8 +8,11 @@ import { loadConfig, saveConfig } from './storage/config.ts';
 import { InvalidConfigFileError, parseImportedConfig, serializeConfigForExport } from './storage/exportImport.ts';
 import { downloadJsonFile, DownloadCancelledError } from './output/download.ts';
 import { generateAndDownload, OutputValidationError } from './output/generate.ts';
+import { decimalToDmsLatitude, decimalToDmsLongitude, dmsToDecimal } from './core/coordinates.ts';
 import {
   validateDepressionAngle,
+  validateDmsDegrees,
+  validateDmsMinutesOrSeconds,
   validateElevation,
   validateGenerator,
   validateHijriOffset,
@@ -31,8 +34,14 @@ function byId<T extends HTMLElement>(id: string): T {
 const form = byId<HTMLFormElement>('config-form');
 const statusBanner = byId<HTMLDivElement>('status-banner');
 const resultBanner = byId<HTMLDivElement>('result-banner');
-const latitudeInput = byId<HTMLInputElement>('latitude');
-const longitudeInput = byId<HTMLInputElement>('longitude');
+const latitudeDegreesInput = byId<HTMLInputElement>('latitude-degrees');
+const latitudeMinutesInput = byId<HTMLInputElement>('latitude-minutes');
+const latitudeSecondsInput = byId<HTMLInputElement>('latitude-seconds');
+const latitudeDirectionSelect = byId<HTMLSelectElement>('latitude-direction');
+const longitudeDegreesInput = byId<HTMLInputElement>('longitude-degrees');
+const longitudeMinutesInput = byId<HTMLInputElement>('longitude-minutes');
+const longitudeSecondsInput = byId<HTMLInputElement>('longitude-seconds');
+const longitudeDirectionSelect = byId<HTMLSelectElement>('longitude-direction');
 const elevationInput = byId<HTMLInputElement>('elevation');
 const timezoneInput = byId<HTMLInputElement>('timezone');
 const fajrAngleInput = byId<HTMLInputElement>('fajr-angle');
@@ -82,6 +91,7 @@ function applyTranslations(): void {
   }
 
   renderRoundingTable();
+  retranslateMetaFieldRows();
   renderStatusBanner();
   renderResultBanner();
 }
@@ -163,10 +173,23 @@ function addMetaFieldRow(key = '', value = ''): void {
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
   removeBtn.textContent = translate(currentLanguage, 'removeMetaField');
+  removeBtn.dataset.role = 'meta-remove';
   removeBtn.addEventListener('click', () => row.remove());
 
   row.append(keyInput, valueInput, removeBtn);
   metaFieldsList.appendChild(row);
+}
+
+/** Re-applies current-language placeholders/labels to already-created meta field rows on language switch. */
+function retranslateMetaFieldRows(): void {
+  for (const row of metaFieldsList.querySelectorAll<HTMLDivElement>('.meta-field-row')) {
+    const keyInput = row.querySelector<HTMLInputElement>('[data-role="meta-key"]');
+    const valueInput = row.querySelector<HTMLInputElement>('[data-role="meta-value"]');
+    const removeBtn = row.querySelector<HTMLButtonElement>('[data-role="meta-remove"]');
+    if (keyInput) keyInput.placeholder = translate(currentLanguage, 'metaKeyPlaceholder');
+    if (valueInput) valueInput.placeholder = translate(currentLanguage, 'metaValuePlaceholder');
+    if (removeBtn) removeBtn.textContent = translate(currentLanguage, 'removeMetaField');
+  }
 }
 
 addMetaFieldBtn.addEventListener('click', () => addMetaFieldRow());
@@ -209,7 +232,7 @@ function showFieldError(input: HTMLInputElement, errorElId: string, result: Fiel
   input.setAttribute('aria-invalid', 'true');
   if (errorEl && result.errorKey) {
     errorEl.hidden = false;
-    errorEl.textContent = translate(currentLanguage, result.errorKey as MessageKey);
+    errorEl.textContent = translate(currentLanguage, result.errorKey);
   }
 }
 
@@ -221,8 +244,6 @@ interface LiveValidator {
 
 function wireLiveValidators(): LiveValidator[] {
   const validators: LiveValidator[] = [
-    { input: latitudeInput, errorId: 'latitude-error', validate: () => validateLatitude(Number(latitudeInput.value)) },
-    { input: longitudeInput, errorId: 'longitude-error', validate: () => validateLongitude(Number(longitudeInput.value)) },
     {
       input: elevationInput,
       errorId: 'elevation-error',
@@ -248,6 +269,92 @@ function wireLiveValidators(): LiveValidator[] {
 
 const liveValidators = wireLiveValidators();
 
+// --- coordinate groups (degrees/minutes/seconds + N/S/E/W) --------------
+
+interface CoordinateGroupRefs {
+  axis: 'lat' | 'lon';
+  degrees: HTMLInputElement;
+  minutes: HTMLInputElement;
+  seconds: HTMLInputElement;
+  direction: HTMLSelectElement;
+  errorId: string;
+}
+
+const latitudeGroup: CoordinateGroupRefs = {
+  axis: 'lat',
+  degrees: latitudeDegreesInput,
+  minutes: latitudeMinutesInput,
+  seconds: latitudeSecondsInput,
+  direction: latitudeDirectionSelect,
+  errorId: 'latitude-error',
+};
+const longitudeGroup: CoordinateGroupRefs = {
+  axis: 'lon',
+  degrees: longitudeDegreesInput,
+  minutes: longitudeMinutesInput,
+  seconds: longitudeSecondsInput,
+  direction: longitudeDirectionSelect,
+  errorId: 'longitude-error',
+};
+
+function toggleInvalid(input: HTMLInputElement, valid: boolean): void {
+  input.classList.toggle('invalid', !valid);
+  if (valid) input.removeAttribute('aria-invalid');
+  else input.setAttribute('aria-invalid', 'true');
+}
+
+function coordinateGroupDecimal(refs: CoordinateGroupRefs): number {
+  return dmsToDecimal({
+    degrees: Number(refs.degrees.value),
+    minutes: Number(refs.minutes.value),
+    seconds: Number(refs.seconds.value),
+    direction: refs.direction.value,
+  });
+}
+
+function validateAndRenderCoordinateGroup(refs: CoordinateGroupRefs): boolean {
+  const degResult = validateDmsDegrees(Number(refs.degrees.value), refs.axis);
+  const minResult = validateDmsMinutesOrSeconds(Number(refs.minutes.value));
+  const secResult = validateDmsMinutesOrSeconds(Number(refs.seconds.value));
+  toggleInvalid(refs.degrees, degResult.valid);
+  toggleInvalid(refs.minutes, minResult.valid);
+  toggleInvalid(refs.seconds, secResult.valid);
+
+  const errorEl = document.getElementById(refs.errorId);
+  const partFailure = [degResult, minResult, secResult].find((r) => !r.valid);
+  if (partFailure) {
+    if (errorEl && partFailure.errorKey) {
+      errorEl.hidden = false;
+      errorEl.textContent = translate(currentLanguage, partFailure.errorKey);
+    }
+    return false;
+  }
+
+  const combined = refs.axis === 'lat' ? validateLatitude(coordinateGroupDecimal(refs)) : validateLongitude(coordinateGroupDecimal(refs));
+  if (!combined.valid) {
+    toggleInvalid(refs.degrees, false);
+    if (errorEl && combined.errorKey) {
+      errorEl.hidden = false;
+      errorEl.textContent = translate(currentLanguage, combined.errorKey);
+    }
+    return false;
+  }
+
+  if (errorEl) {
+    errorEl.hidden = true;
+    errorEl.textContent = '';
+  }
+  return true;
+}
+
+for (const refs of [latitudeGroup, longitudeGroup]) {
+  for (const el of [refs.degrees, refs.minutes, refs.seconds, refs.direction]) {
+    el.addEventListener('input', () => validateAndRenderCoordinateGroup(refs));
+    el.addEventListener('blur', () => validateAndRenderCoordinateGroup(refs));
+    el.addEventListener('change', () => validateAndRenderCoordinateGroup(refs));
+  }
+}
+
 // --- form <-> AppConfig -------------------------------------------------
 
 function asrMethodFromForm(): AsrMethod {
@@ -268,8 +375,8 @@ function readConfigFromForm(): AppConfig {
   const { fields } = collectMetaFields();
   return {
     location: {
-      latitude: Number(latitudeInput.value),
-      longitude: Number(longitudeInput.value),
+      latitude: coordinateGroupDecimal(latitudeGroup),
+      longitude: coordinateGroupDecimal(longitudeGroup),
       elevation: elevationInput.value.trim() === '' ? DEFAULT_ELEVATION_M : Number(elevationInput.value),
       timezone: timezoneInput.value.trim(),
     },
@@ -295,8 +402,18 @@ function readConfigFromForm(): AppConfig {
 function applyConfigToForm(config: AppConfig): void {
   currentLanguage = config.language;
 
-  latitudeInput.value = String(config.location.latitude);
-  longitudeInput.value = String(config.location.longitude);
+  const lat = decimalToDmsLatitude(config.location.latitude);
+  latitudeDegreesInput.value = String(lat.degrees);
+  latitudeMinutesInput.value = String(lat.minutes);
+  latitudeSecondsInput.value = String(lat.seconds);
+  latitudeDirectionSelect.value = lat.direction;
+
+  const lon = decimalToDmsLongitude(config.location.longitude);
+  longitudeDegreesInput.value = String(lon.degrees);
+  longitudeMinutesInput.value = String(lon.minutes);
+  longitudeSecondsInput.value = String(lon.seconds);
+  longitudeDirectionSelect.value = lon.direction;
+
   elevationInput.value = String(config.location.elevation);
   timezoneInput.value = config.location.timezone;
 
@@ -445,6 +562,8 @@ function runAllValidations(): boolean {
     showFieldError(v.input, v.errorId, result);
     if (!result.valid) allValid = false;
   }
+  if (!validateAndRenderCoordinateGroup(latitudeGroup)) allValid = false;
+  if (!validateAndRenderCoordinateGroup(longitudeGroup)) allValid = false;
   for (const prayer of PRAYER_NAMES) {
     const input = minuteOffsetInputs[prayer];
     if (input && !validateMinuteOffset(Number(input.value)).valid) {

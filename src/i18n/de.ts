@@ -14,6 +14,13 @@ export const de: Messages = {
 
   fieldLatitude: 'Breitengrad',
   fieldLongitude: 'Längengrad',
+  dmsDegreesUnit: 'Grad',
+  dmsMinutesUnit: 'Minuten',
+  dmsSecondsUnit: 'Sekunden',
+  directionNorth: 'Nord (N)',
+  directionSouth: 'Süd (S)',
+  directionEast: 'Ost (O)',
+  directionWest: 'West (W)',
   fieldElevation: 'Höhe über dem Meeresspiegel (m)',
   fieldElevationHint: 'Leer lassen für 0 m.',
   fieldTimezone: 'Zeitzone (IANA, z. B. Europe/Berlin)',
@@ -70,6 +77,8 @@ export const de: Messages = {
 
   errorLatitude: 'Breitengrad muss zwischen −90 und 90 liegen.',
   errorLongitude: 'Längengrad muss zwischen −180 und 180 liegen.',
+  errorDmsDegrees: 'Grad müssen eine ganze Zahl im gültigen Bereich sein.',
+  errorDmsMinutesSeconds: 'Minuten und Sekunden müssen zwischen 0 und unter 60 liegen.',
   errorElevation: 'Höhe muss zwischen 0 und 9000 m liegen.',
   errorTimezoneRequired: 'Zeitzone ist erforderlich.',
   errorTimezoneUnknown: 'Unbekannte Zeitzone.',

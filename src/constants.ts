@@ -1,18 +1,16 @@
 import type { AsrMethod, PrayerName, RoundingDirection } from './types.ts';
 
 /**
- * Rounding direction per prayer. Fixed by design, not an operator setting:
- * rounding down announces a prayer slightly early, rounding Maghrib up
- * announces it slightly late — both err toward a fast being valid during
- * Ramadan. Do not make this configurable.
+ * Rounding direction per prayer. Fixed by design, not an operator setting.
+ * Do not make this configurable.
  */
 export const ROUNDING_DIRECTIONS: Readonly<Record<PrayerName, RoundingDirection>> = {
   fajr: 'down',
   shuruq: 'down',
-  dhuhr: 'down',
-  asr: 'down',
+  dhuhr: 'up',
+  asr: 'up',
   maghrib: 'up',
-  isha: 'down',
+  isha: 'up',
 };
 
 /** Used when the operator leaves elevation blank. */
@@ -25,6 +23,12 @@ export const DEFAULT_ASR_METHOD: AsrMethod = 1;
 export const VALIDATION_RANGES = {
   latitudeDeg: { min: -90, max: 90 },
   longitudeDeg: { min: -180, max: 180 },
+  /** Whole-degree part of a latitude entered as degrees/minutes/seconds. */
+  dmsDegreesLat: { min: 0, max: 90 },
+  /** Whole-degree part of a longitude entered as degrees/minutes/seconds. */
+  dmsDegreesLon: { min: 0, max: 180 },
+  /** Arcminutes and arcseconds are base-60, both entered in the same [0, 60) range. */
+  dmsMinutesSeconds: { min: 0, max: 60 },
   elevationM: { min: 0, max: 9000 },
   /** Depression angles used by every published calculation method fall within this band. */
   depressionAngleDeg: { min: 2, max: 30 },

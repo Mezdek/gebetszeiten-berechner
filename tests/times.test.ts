@@ -64,27 +64,37 @@ describe('Isha after midnight (Helsinki, high-latitude near-solstice twilight)',
   it('reports Isha finalMinutes at or beyond 1440 (past local midnight)', () => {
     const detail = calculateDayTimesDetailed({ year: 2027, month: 6, day: 21 }, helsinki, shallowCalc, zeroOffsets);
     expect(detail.isha.finalMinutes).toBeGreaterThanOrEqual(1440);
-    expect(detail.isha.display).toBe('00:07');
+    expect(detail.isha.display).toBe('00:08'); // Isha rounds up
   });
 
   it('keeps that Isha time attributed to the requested calendar date, without inserting an extra day', () => {
     const days = generateYearDays(2027, helsinki, shallowCalc, zeroOffsets, 0);
     expect(Object.keys(days)).toHaveLength(365); // no synthetic extra date from the midnight overflow
-    expect(days['2027-06-21']?.isha).toBe('00:07');
+    expect(days['2027-06-21']?.isha).toBe('00:08');
   });
 });
 
 describe('rounding + offset ordering inside calculateDayTimesDetailed', () => {
   it('roundedMinutes reflects only rounding; finalMinutes adds the offset on top', () => {
-    const offsets: MinuteOffsets = { ...zeroOffsets, fajr: 3, maghrib: -2 };
+    const offsets: MinuteOffsets = { ...zeroOffsets, fajr: 3, dhuhr: 1, asr: 1, maghrib: -2, isha: -1 };
     const detail = calculateDayTimesDetailed({ year: 2027, month: 6, day: 1 }, cairo, standardCalc, offsets);
 
-    // fajr rounds down
+    // fajr and shuruq round down
     expect(detail.fajr.roundedMinutes).toBe(Math.floor(detail.fajr.exactMinutes));
     expect(detail.fajr.finalMinutes).toBe(detail.fajr.roundedMinutes + 3);
+    expect(detail.shuruq.roundedMinutes).toBe(Math.floor(detail.shuruq.exactMinutes));
 
-    // maghrib rounds up
+    // dhuhr, asr, maghrib, and isha round up
+    expect(detail.dhuhr.roundedMinutes).toBe(Math.ceil(detail.dhuhr.exactMinutes));
+    expect(detail.dhuhr.finalMinutes).toBe(detail.dhuhr.roundedMinutes + 1);
+
+    expect(detail.asr.roundedMinutes).toBe(Math.ceil(detail.asr.exactMinutes));
+    expect(detail.asr.finalMinutes).toBe(detail.asr.roundedMinutes + 1);
+
     expect(detail.maghrib.roundedMinutes).toBe(Math.ceil(detail.maghrib.exactMinutes));
     expect(detail.maghrib.finalMinutes).toBe(detail.maghrib.roundedMinutes - 2);
+
+    expect(detail.isha.roundedMinutes).toBe(Math.ceil(detail.isha.exactMinutes));
+    expect(detail.isha.finalMinutes).toBe(detail.isha.roundedMinutes - 1);
   });
 });

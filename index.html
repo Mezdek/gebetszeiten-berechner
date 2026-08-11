@@ -28,14 +28,36 @@
           <legend data-i18n="sectionLocation"></legend>
 
           <div class="field">
-            <label for="latitude" data-i18n="fieldLatitude"></label>
-            <input type="number" id="latitude" name="latitude" step="any" required />
+            <label id="latitude-group-label" data-i18n="fieldLatitude"></label>
+            <div class="dms-group" role="group" aria-labelledby="latitude-group-label">
+              <input type="number" id="latitude-degrees" step="1" min="0" max="90" required />
+              <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
+              <input type="number" id="latitude-minutes" step="1" min="0" max="59" required />
+              <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
+              <input type="number" id="latitude-seconds" step="any" min="0" max="59.999" required />
+              <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
+              <select id="latitude-direction">
+                <option value="N" data-i18n="directionNorth"></option>
+                <option value="S" data-i18n="directionSouth"></option>
+              </select>
+            </div>
             <p class="field-error" id="latitude-error" hidden></p>
           </div>
 
           <div class="field">
-            <label for="longitude" data-i18n="fieldLongitude"></label>
-            <input type="number" id="longitude" name="longitude" step="any" required />
+            <label id="longitude-group-label" data-i18n="fieldLongitude"></label>
+            <div class="dms-group" role="group" aria-labelledby="longitude-group-label">
+              <input type="number" id="longitude-degrees" step="1" min="0" max="180" required />
+              <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
+              <input type="number" id="longitude-minutes" step="1" min="0" max="59" required />
+              <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
+              <input type="number" id="longitude-seconds" step="any" min="0" max="59.999" required />
+              <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
+              <select id="longitude-direction">
+                <option value="E" data-i18n="directionEast"></option>
+                <option value="W" data-i18n="directionWest"></option>
+              </select>
+            </div>
             <p class="field-error" id="longitude-error" hidden></p>
           </div>
 
