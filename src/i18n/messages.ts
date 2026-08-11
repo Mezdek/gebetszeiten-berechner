@@ -1,8 +1,18 @@
 export interface Messages {
   appTitle: string;
   langSwitcherLabel: string;
-  langDe: string;
-  langAr: string;
+
+  aboutButton: string;
+  aboutCloseLabel: string;
+  aboutTitle: string;
+  aboutDescription: string;
+  aboutHighLatitudeNote: string;
+  aboutVersionLabel: string;
+  aboutMaintainerLabel: string;
+  aboutWebsiteLabel: string;
+  aboutEmailLabel: string;
+  aboutLicenseLabel: string;
+  aboutRepositoryLabel: string;
 
   sectionLocation: string;
   sectionCalculation: string;

@@ -1,7 +1,14 @@
 {
   "name": "gebetszeiten-berechner",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Browser-based tool that computes Islamic prayer times for one Gregorian year at a fixed location and exports them as JSON.",
+  "license": "MIT",
+  "author": "Mezdek Osman <hello@mezdek.net> (https://mezdek.net)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mezdek/gebetszeiten-berechner"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -10,14 +10,12 @@
     <div id="app">
       <header class="app-header">
         <h1 data-i18n="appTitle"></h1>
-        <div class="lang-switch" role="group" aria-label="Language">
-          <span data-i18n="langSwitcherLabel" class="lang-switch-label"></span>
-          <button type="button" id="lang-de-btn" class="lang-btn" data-lang="de">
-            <span data-i18n="langDe"></span>
-          </button>
-          <button type="button" id="lang-ar-btn" class="lang-btn" data-lang="ar">
-            <span data-i18n="langAr"></span>
-          </button>
+        <div class="header-controls">
+          <button type="button" id="about-btn" class="about-btn" data-i18n="aboutButton"></button>
+          <select id="lang-select" class="lang-select" data-i18n-aria-label="langSwitcherLabel">
+            <option value="de">Deutsch</option>
+            <option value="ar">العربية</option>
+          </select>
         </div>
       </header>
 
@@ -30,12 +28,18 @@
           <div class="field">
             <label id="latitude-group-label" data-i18n="fieldLatitude"></label>
             <div class="dms-group" role="group" aria-labelledby="latitude-group-label">
-              <input type="number" id="latitude-degrees" step="1" min="0" max="90" required />
-              <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
-              <input type="number" id="latitude-minutes" step="1" min="0" max="59" required />
-              <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
-              <input type="number" id="latitude-seconds" step="any" min="0" max="59.999" required />
-              <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
+              <span class="dms-part">
+                <input type="number" id="latitude-degrees" step="1" min="0" max="90" required />
+                <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
+              </span>
+              <span class="dms-part">
+                <input type="number" id="latitude-minutes" step="1" min="0" max="59" required />
+                <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
+              </span>
+              <span class="dms-part">
+                <input type="number" id="latitude-seconds" step="any" min="0" max="59.999" required />
+                <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
+              </span>
               <select id="latitude-direction">
                 <option value="N" data-i18n="directionNorth"></option>
                 <option value="S" data-i18n="directionSouth"></option>
@@ -47,12 +51,18 @@
           <div class="field">
             <label id="longitude-group-label" data-i18n="fieldLongitude"></label>
             <div class="dms-group" role="group" aria-labelledby="longitude-group-label">
-              <input type="number" id="longitude-degrees" step="1" min="0" max="180" required />
-              <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
-              <input type="number" id="longitude-minutes" step="1" min="0" max="59" required />
-              <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
-              <input type="number" id="longitude-seconds" step="any" min="0" max="59.999" required />
-              <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
+              <span class="dms-part">
+                <input type="number" id="longitude-degrees" step="1" min="0" max="180" required />
+                <span class="dms-unit" data-i18n="dmsDegreesUnit"></span>
+              </span>
+              <span class="dms-part">
+                <input type="number" id="longitude-minutes" step="1" min="0" max="59" required />
+                <span class="dms-unit" data-i18n="dmsMinutesUnit"></span>
+              </span>
+              <span class="dms-part">
+                <input type="number" id="longitude-seconds" step="any" min="0" max="59.999" required />
+                <span class="dms-unit" data-i18n="dmsSecondsUnit"></span>
+              </span>
               <select id="longitude-direction">
                 <option value="E" data-i18n="directionEast"></option>
                 <option value="W" data-i18n="directionWest"></option>
@@ -107,9 +117,9 @@
         <fieldset class="section">
           <legend data-i18n="sectionAdjustments"></legend>
 
-          <table class="rounding-table" id="rounding-table">
-            <tbody id="rounding-table-body"></tbody>
-          </table>
+          <div class="rounding-table" id="rounding-table" role="table">
+            <div id="rounding-table-body" role="rowgroup"></div>
+          </div>
 
           <div class="field">
             <label for="hijri-offset" data-i18n="fieldHijriOffset"></label>
@@ -159,6 +169,48 @@
 
       <div id="result-banner" class="banner" hidden role="status"></div>
     </div>
+
+    <dialog id="about-dialog" aria-labelledby="about-dialog-title">
+      <div class="dialog-header">
+        <h2 id="about-dialog-title" data-i18n="aboutTitle"></h2>
+        <button type="button" id="about-close-btn" class="dialog-close" data-i18n-aria-label="aboutCloseLabel">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <p data-i18n="aboutDescription"></p>
+      <p data-i18n="aboutHighLatitudeNote"></p>
+      <dl class="about-meta">
+        <div class="about-meta-row">
+          <dt data-i18n="aboutVersionLabel"></dt>
+          <dd>1.0.0</dd>
+        </div>
+        <div class="about-meta-row">
+          <dt data-i18n="aboutMaintainerLabel"></dt>
+          <dd>Mezdek Osman</dd>
+        </div>
+        <div class="about-meta-row">
+          <dt data-i18n="aboutWebsiteLabel"></dt>
+          <dd><a href="https://mezdek.net" target="_blank" rel="noopener noreferrer">mezdek.net</a></dd>
+        </div>
+        <div class="about-meta-row">
+          <dt data-i18n="aboutEmailLabel"></dt>
+          <dd><a href="mailto:hello@mezdek.net">hello@mezdek.net</a></dd>
+        </div>
+        <div class="about-meta-row">
+          <dt data-i18n="aboutLicenseLabel"></dt>
+          <dd>MIT</dd>
+        </div>
+        <div class="about-meta-row">
+          <dt data-i18n="aboutRepositoryLabel"></dt>
+          <dd>
+            <a href="https://github.com/Mezdek/gebetszeiten-berechner" target="_blank" rel="noopener noreferrer"
+              >github.com/Mezdek/gebetszeiten-berechner</a
+            >
+          </dd>
+        </div>
+      </dl>
+    </dialog>
+
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>

@@ -2,9 +2,10 @@ import './style.css';
 import type { AppConfig, AsrMethod, MetaFields, MinuteOffsets, PrayerName } from './types.ts';
 import { PRAYER_NAMES } from './types.ts';
 import { DEFAULT_ASR_METHOD, DEFAULT_ELEVATION_M, ROUNDING_DIRECTIONS } from './constants.ts';
-import { LANGUAGES, isRtl, translate, type Language } from './i18n/index.ts';
+import { isRtl, translate, type Language } from './i18n/index.ts';
 import type { MessageKey } from './i18n/messages.ts';
 import { loadConfig, saveConfig } from './storage/config.ts';
+import { loadLanguagePreference, saveLanguagePreference } from './storage/languagePreference.ts';
 import { InvalidConfigFileError, parseImportedConfig, serializeConfigForExport } from './storage/exportImport.ts';
 import { downloadJsonFile, DownloadCancelledError } from './output/download.ts';
 import { generateAndDownload, OutputValidationError } from './output/generate.ts';
@@ -50,12 +51,16 @@ const hijriOffsetInput = byId<HTMLInputElement>('hijri-offset');
 const yearInput = byId<HTMLInputElement>('year');
 const generatorInput = byId<HTMLInputElement>('generator');
 const validateSchemaInput = byId<HTMLInputElement>('validate-schema');
-const roundingTableBody = byId<HTMLTableSectionElement>('rounding-table-body');
+const roundingTableBody = byId<HTMLDivElement>('rounding-table-body');
 const metaFieldsList = byId<HTMLDivElement>('meta-fields-list');
 const addMetaFieldBtn = byId<HTMLButtonElement>('add-meta-field-btn');
 const exportBtn = byId<HTMLButtonElement>('export-btn');
 const importBtn = byId<HTMLButtonElement>('import-btn');
 const importFile = byId<HTMLInputElement>('import-file');
+const langSelect = byId<HTMLSelectElement>('lang-select');
+const aboutBtn = byId<HTMLButtonElement>('about-btn');
+const aboutDialog = byId<HTMLDialogElement>('about-dialog');
+const aboutCloseBtn = byId<HTMLButtonElement>('about-close-btn');
 
 let currentLanguage: Language = 'de';
 const minuteOffsetInputs: Partial<Record<PrayerName, HTMLInputElement>> = {};
@@ -86,9 +91,12 @@ function applyTranslations(): void {
     el.textContent = translate(currentLanguage, key);
   }
 
-  for (const btn of document.querySelectorAll<HTMLButtonElement>('.lang-btn')) {
-    btn.setAttribute('aria-pressed', String(btn.dataset.lang === currentLanguage));
+  for (const el of document.querySelectorAll<HTMLElement>('[data-i18n-aria-label]')) {
+    const key = el.dataset.i18nAriaLabel as MessageKey;
+    el.setAttribute('aria-label', translate(currentLanguage, key));
   }
+
+  langSelect.value = currentLanguage;
 
   renderRoundingTable();
   retranslateMetaFieldRows();
@@ -96,14 +104,17 @@ function applyTranslations(): void {
   renderResultBanner();
 }
 
-function setLanguage(language: Language): void {
+/** Sets the active language. `persist` is false when restoring a stored/loaded language, true for an explicit operator choice. */
+function setLanguage(language: Language, persist: boolean): void {
   currentLanguage = language;
+  if (persist) saveLanguagePreference(language);
   applyTranslations();
 }
 
-for (const language of LANGUAGES) {
-  byId<HTMLButtonElement>(`lang-${language}-btn`).addEventListener('click', () => setLanguage(language));
-}
+langSelect.addEventListener('change', () => {
+  const value = langSelect.value === 'ar' ? 'ar' : 'de';
+  setLanguage(value, true);
+});
 
 // --- rounding table (minute offsets, rounding direction shown per prayer) --
 
@@ -117,23 +128,34 @@ function renderRoundingTable(): void {
   roundingTableBody.replaceChildren();
   for (const prayer of PRAYER_NAMES) {
     const direction = ROUNDING_DIRECTIONS[prayer];
-    const row = document.createElement('tr');
+    const row = document.createElement('div');
+    row.className = 'rounding-row';
+    row.setAttribute('role', 'row');
 
-    const nameCell = document.createElement('td');
+    const nameCell = document.createElement('div');
+    nameCell.className = 'rounding-cell rounding-cell-name';
+    nameCell.setAttribute('role', 'cell');
     nameCell.textContent = translate(currentLanguage, `prayer${capitalize(prayer)}` as MessageKey);
     row.appendChild(nameCell);
 
-    const offsetCell = document.createElement('td');
+    const offsetCell = document.createElement('div');
+    offsetCell.className = 'rounding-cell rounding-cell-offset';
+    offsetCell.setAttribute('role', 'cell');
+    const offsetLabel = document.createElement('span');
+    offsetLabel.className = 'rounding-offset-label';
+    offsetLabel.textContent = translate(currentLanguage, 'fieldMinuteOffset');
     const offsetInput = document.createElement('input');
     offsetInput.type = 'number';
     offsetInput.step = '1';
     offsetInput.value = previousValues[prayer] ?? '0';
     offsetInput.setAttribute('aria-label', translate(currentLanguage, 'fieldMinuteOffset'));
-    offsetCell.appendChild(offsetInput);
+    offsetCell.append(offsetLabel, offsetInput);
     row.appendChild(offsetCell);
     minuteOffsetInputs[prayer] = offsetInput;
 
-    const roundingCell = document.createElement('td');
+    const roundingCell = document.createElement('div');
+    roundingCell.className = 'rounding-cell rounding-cell-explanation';
+    roundingCell.setAttribute('role', 'cell');
     const directionSpan = document.createElement('span');
     directionSpan.className = 'rounding-direction';
     directionSpan.textContent = direction === 'down' ? '▼' : '▲';
@@ -400,7 +422,11 @@ function readConfigFromForm(): AppConfig {
 }
 
 function applyConfigToForm(config: AppConfig): void {
-  currentLanguage = config.language;
+  // Deliberately does not touch currentLanguage: the UI language is the
+  // operator's own dropdown preference (see storage/languagePreference.ts),
+  // independent of whichever language a loaded or imported config was saved
+  // under. config.language is written on save for the exported file's own
+  // record, not read back to drive the UI.
 
   const lat = decimalToDmsLatitude(config.location.latitude);
   latitudeDegreesInput.value = String(lat.degrees);
@@ -457,6 +483,9 @@ function renderStatusBanner(): void {
 }
 
 function initFromStorage(): void {
+  const storedLanguage = loadLanguagePreference();
+  if (storedLanguage) currentLanguage = storedLanguage;
+
   const result = loadConfig();
   if (result.status === 'loaded') {
     applyConfigToForm(result.config);
@@ -474,6 +503,31 @@ function initFromStorage(): void {
     showStatusBanner('configNotFound', 'info');
   }
 }
+
+// --- About dialog ---------------------------------------------------------
+
+let aboutTrigger: HTMLElement | null = null;
+
+aboutBtn.addEventListener('click', () => {
+  aboutTrigger = aboutBtn;
+  aboutDialog.showModal(); // native: moves focus into the dialog, Escape closes it
+});
+
+aboutCloseBtn.addEventListener('click', () => aboutDialog.close());
+
+aboutDialog.addEventListener('click', (event) => {
+  // Native <dialog> has no distinct backdrop element to target, so a click is
+  // "outside" when its coordinates fall outside the dialog's own box.
+  const rect = aboutDialog.getBoundingClientRect();
+  const inside =
+    event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+  if (!inside) aboutDialog.close();
+});
+
+aboutDialog.addEventListener('close', () => {
+  aboutTrigger?.focus();
+  aboutTrigger = null;
+});
 
 // --- export / import ------------------------------------------------------
 
